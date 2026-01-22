@@ -142,7 +142,7 @@
                             </a>
                         </div>
                         <div class="mx-3 my-2 d-grid">
-                            <a href="{{route('deconnecter')}}" class="btn btn-danger d-flex align-items-center justify-content-between">
+                            <a href="{{route('deconnecter')}}" class="btn btn-danger d-flex align-items-center justify-content-between logoutBtn">
                                 <span class="me-3" >Déconnexion</span>
                                 <i class="ri-contract-right-fill"></i>
                             </a>
@@ -379,7 +379,7 @@
                                     </a>
                                     <ul class="treeview-menu">
                                         <li>
-                                            <a @if(request()->routeIs('medecin_new')) style="color: #eb6325" @endif href="{{route('medecin_new')}}">Nouveau</a>
+                                            <a @if(request()->routeIs('medecin_new')) style="color: #eb6325" @endif href="{{route('medecin_new')}}">Médecin</a>
                                         </li>
                                         <li>
                                             <a @if(request()->routeIs('specialite')) style="color: #eb6325" @endif href="{{route('specialite')}}">
@@ -450,10 +450,10 @@
                         </li>
                     </ul>
                 </div>
-                <div class="sidebar-contact">
-                    <p class="fw-light mb-1 text-nowrap text-truncate">Emergency Contact</p>
-                    <h5 class="m-0 lh-1 text-nowrap text-truncate">0987654321</h5>
-                    <i class="ri-phone-line"></i>
+                <div class="sidebar-contact bg-primary">
+                    <p class="fw-light mb-1 text-nowrap text-truncate">Version</p>
+                    <h5 class="m-0 lh-1 text-nowrap text-truncate">1.0.0</h5>
+                    <i class="ri-settings-5-line"></i>
                 </div>
             </nav>
             <div class="app-container">

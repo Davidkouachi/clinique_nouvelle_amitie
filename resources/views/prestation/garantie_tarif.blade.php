@@ -22,12 +22,11 @@
 <div class="app-body">
     <div class="row gx-3">
         <div class="col-xxl-12 col-sm-12">
-            <div class="card mb-3 bg-3">
-                <div class="card-body" style="background: rgba(0, 0, 0, 0.7);">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
                     <div class="py-4 px-3 text-white">
-                        <h6>GARANTIES & TARIFS</h6>
-                        {{-- <h2>{{Auth::user()->sexe.'. '.Auth::user()->name}}</h2> --}}
-                        <p>Accueil / Configuration / Garanties & Tarifs</p>
+                        <h3>GARANTIES & TARIFS</h3>
+                        <h6>Configurations / Garanties & Tarifs</h6>
                     </div>
                 </div>
             </div>
@@ -36,17 +35,17 @@
     <div class="row gx-3" >
         <div class="col-sm-12">
             <div class="card mb-3">
-                <div class="card-body" style="margin-top: -30px;">
+                <div class="card-body" style="margin-top: -20px;">
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-twoG" data-bs-toggle="tab" href="#twoG" role="tab" aria-controls="twoG" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-twoG" data-bs-toggle="tab" href="#twoG" role="tab" aria-controls="twoG" aria-selected="false" tabindex="-1">
                                     <i class="ri-home-7-line me-2"></i>
                                     Garanties
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoT" data-bs-toggle="tab" href="#twoT" role="tab" aria-controls="twoT" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoT" data-bs-toggle="tab" href="#twoT" role="tab" aria-controls="twoT" aria-selected="false" tabindex="-1">
                                     <i class="ri-home-7-line me-2"></i>
                                     Tarifs
                                 </a>

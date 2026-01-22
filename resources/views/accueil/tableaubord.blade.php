@@ -62,8 +62,8 @@
     <div class="row gx-3 mt-0 mb-5" id="stat_consultation" style="display: none;"></div>
     <div class="row gx-3">
         <div class="col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-            <div class="card mb-3 bg-2">
-                <div class="card-body rounded-2" style="background: rgba(0, 0, 0, 0.7);">
+            <div class="card mb-3 " style="background: #0f1115 url(assets/images/bg3.jpg) no-repeat;">
+                <div class="card-body rounded-2" style="background: rgba(0, 0, 0, 0.2);">
                     <div class="mh-230">
                         <div class="text-white">
                             <h6>Bienvenue,</h6>
@@ -151,7 +151,7 @@
         </div>
         <div class="col-xxl-3 col-xl-12 col-lg-12 col-md-12 col-sm-12">
             <div class="card mb-3" style="background: #0f1115 url(assets/images/bg2.jpg) no-repeat;">
-                <div class="card-body" style="background: rgba(0, 0, 0, 0.7);">
+                <div class="card-body" style="background: rgba(0, 0, 0, 0.1);">
                     <div class="mh-230 text-white">
                         <h6>Statistiques des consultations de cette semaine</h6>
                         <div class="text-body chart-height-md" id="docActivity" style="margin-top: -30px;">
@@ -162,14 +162,14 @@
             </div>
         </div>
         <div class="col-12">
-            <div class="card bg-3 mb-3" >
-                <div class="rounded-2" style="background: rgba(0, 0, 0, 0.7);">
-                    <div class="card-body d-flex align-items-center justify-content-between" >
+            <div class="card mb-3" >
+                <div class="rounded-2">
+                    <div class="card-body d-flex align-items-center justify-content-between" style="background: #f8b61b">
                         <h5 class="card-title text-center text-white fw-bold">
                             Solde des actes d'aujourd'hui.
                         </h5>
                         <div class="d-flex" >
-                            <a id="btn_refresh_stat_fac" class="btn btn-warning ms-auto">
+                            <a id="btn_refresh_stat_fac" class="btn btn-danger ms-auto">
                                 <i class="ri-loop-left-line"></i>
                             </a>
                         </div>
@@ -186,31 +186,31 @@
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-file-user-line me-2"></i>
                                     Nouveau patient
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-oneAAA" data-bs-toggle="tab" href="#oneAAA" role="tab" aria-controls="oneAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-oneAAA" data-bs-toggle="tab" href="#oneAAA" role="tab" aria-controls="oneAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-first-aid-kit-line me-2"></i>
                                     Nouvelle consultation
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link  text-white" id="tab-threeAAAL" data-bs-toggle="tab" href="#threeAAAL" role="tab" aria-controls="threeAAAL" aria-selected="true">
+                                <a class="nav-link " id="tab-threeAAAL" data-bs-toggle="tab" href="#threeAAAL" role="tab" aria-controls="threeAAAL" aria-selected="true">
                                     <i class="ri-calendar-check-line me-2"></i>
                                     Rendez-Vous
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link  text-white" id="tab-threeAAA" data-bs-toggle="tab" href="#threeAAA" role="tab" aria-controls="threeAAA" aria-selected="true">
+                                <a class="nav-link " id="tab-threeAAA" data-bs-toggle="tab" href="#threeAAA" role="tab" aria-controls="threeAAA" aria-selected="true">
                                     <i class="ri-sticky-note-add-line me-2"></i>
                                     Nouvelle societe
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link  text-white" id="tab-frewAAA" data-bs-toggle="tab" href="#frewAAA" role="tab" aria-controls="frewAAA" aria-selected="true">
+                                <a class="nav-link " id="tab-frewAAA" data-bs-toggle="tab" href="#frewAAA" role="tab" aria-controls="frewAAA" aria-selected="true">
                                     <i class="ri-folder-add-line me-2"></i>
                                     Nouvelle Assurance
                                 </a>
@@ -693,7 +693,7 @@
                 </div>
                 <div class="card-body">
                     <div class="">
-                        <div class="">
+                        <div class="table-responsive">
                             <table id="Table_day" class="table Table_day_cons ">
                                 <thead>
                                     <tr>

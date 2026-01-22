@@ -23,8 +23,8 @@
 
     <div class="row justify-content-center" id="div_caisse_verf" style="display: none;">
         <div class="col-12">
-            <div class="card mb-3 bg-3">
-                <div class="rounded-2" style="background: rgba(0, 0, 0, 0.7);" >
+            <div class="card mb-3 cadreTitle">
+                <div class="rounded-2">
                     <div class="card-body row gx-3 d-flex align-items-center justify-content-between">
                         <div class="col-12">
                             <div class="mb-3 text-center">
@@ -64,31 +64,31 @@
                         <div class="custom-tabs-container">
                             <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active text-white" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
+                                    <a class="nav-link active" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
                                         <i class="ri-article-line me-2"></i>
                                         Consulation(s)
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-white" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
+                                    <a class="nav-link" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
                                         <i class="ri-article-line me-2"></i>
                                         Examen(s)
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-white" id="tab-twoA3" data-bs-toggle="tab" href="#twoA3" role="tab" aria-controls="twoA3" aria-selected="false" tabindex="-1">
+                                    <a class="nav-link" id="tab-twoA3" data-bs-toggle="tab" href="#twoA3" role="tab" aria-controls="twoA3" aria-selected="false" tabindex="-1">
                                         <i class="ri-article-line me-2"></i>
                                         Hospitalisation(s)
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-white" id="tab-twoA4" data-bs-toggle="tab" href="#twoA4" role="tab" aria-controls="twoA4" aria-selected="false" tabindex="-1">
+                                    <a class="nav-link" id="tab-twoA4" data-bs-toggle="tab" href="#twoA4" role="tab" aria-controls="twoA4" aria-selected="false" tabindex="-1">
                                         <i class="ri-article-line me-2"></i>
                                         Soins Ambulatoire(s)
                                     </a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link text-white" id="tab-twoA5" data-bs-toggle="tab" href="#twoA5" role="tab" aria-controls="twoA5" aria-selected="false" tabindex="-1">
+                                    <a class="nav-link" id="tab-twoA5" data-bs-toggle="tab" href="#twoA5" role="tab" aria-controls="twoA5" aria-selected="false" tabindex="-1">
                                         <i class="ri-article-line me-2"></i>
                                         Attribution Remise
                                     </a>

@@ -39,6 +39,18 @@
 @section('content')
 
 <div class="app-body">
+    <div class="row gx-3">
+        <div class="col-xxl-12 col-sm-12">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
+                    <div class="py-4 px-3 text-white">
+                        <h3>CONSULTATIONS</h3>
+                        <h6>Services / Consultations</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row gx-3 mb-3" id="stat_consultation_date" style="display: none;">
         <div class="row gx-3">
             <div class="col-12">
@@ -139,6 +151,8 @@
 </div>
 
 <script src="{{asset('jsPDF-master/dist/jspdf.umd.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/para.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/consultation.js')}}"></script>
 
 <script>
     $(document).ready(function() {
@@ -200,58 +214,6 @@
         $('#btn_search_stat_const_date').on('click', function() {
             Statistique_cons();
         });
-
-
-        function formatPrice(input) {
-            // Remove all non-numeric characters except the comma
-            input = input.replace(/[^\d,]/g, '');
-
-            // Convert comma to dot for proper float conversion
-            input = input.replace(',', '.');
-
-            // Convert to float and round to the nearest whole number
-            let number = Math.round(parseFloat(input));
-            if (isNaN(number)) {
-                return '';
-            }
-
-            // Format the number with dot as thousands separator
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function formatPriceT(price) {
-
-            // Convert to float and round to the nearest whole number
-            let number = Math.round(parseInt(price));
-            if (isNaN(number)) {
-                return '';
-            }
-
-            // Format the number with dot as thousands separator
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function formatDate(dateString) {
-                const date = new Date(dateString);
-                
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-                const year = date.getFullYear();
-                
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                const seconds = String(date.getSeconds()).padStart(2, '0');
-                
-                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`; // Format as dd/mm/yyyy hh:mm:ss
-        }
-
-        function showAlert(title, message, type) {
-            Swal.fire({
-                title: title,
-                text: message,
-                icon: type,
-            });
-        }
 
         // ------------------------------------------------------------------
 
@@ -378,48 +340,6 @@
         }
 
         // ------------------------------------------------------------------
-
-        function formatDate(dateString) {
-
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-            const year = date.getFullYear();
-
-            return `${day}/${month}/${year}`; // Format as dd/mm/yyyy
-        }
-
-        function formatDateHeure(dateString) {
-
-            const date = new Date(dateString);
-                
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} à ${hours}:${minutes}:${seconds}`;
-        }
-
-        function calculateAge(dateString) 
-        {
-            const birthDate = new Date(dateString);
-            const today = new Date();
-
-            let age = today.getFullYear() - birthDate.getFullYear();
-
-            // Vérifie si l'anniversaire n'est pas encore passé cette année
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            const dayDiff = today.getDate() - birthDate.getDate();
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
-            }
-
-            return age;
-        }
 
         $('#Table_day').DataTable({
 
@@ -558,7 +478,7 @@
                             preloader.remove();
                         }
 
-                    generatePDFInvoice(facture);
+                    pdfFactureConsultation(facture);
 
                 })
                 .catch(error => {
@@ -588,7 +508,7 @@
                             preloader.remove();
                         }
 
-                    generatePDFficheCons(facture);
+                    pdfFicheConsultation(facture);
 
                 })
                 .catch(error => {
@@ -601,469 +521,6 @@
 
                 $('#IddeleteCons').val(numfac);
             });
-        }
-
-        function generatePDFInvoice(facture) {
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "Consultation Facture N°" + facture.numfac + " du " + formatDate(facture.date);
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            yPos = 10;
-
-            function drawConsultationSection(yPos) {
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                const titlea = "Facture";
-                doc.setFontSize(100);
-                doc.setTextColor(242, 237, 237); // Gray color for background effect
-                doc.setFont("Helvetica", "bold");
-                doc.text(titlea, 120, yPos + 120, { align: 'center', angle: 40 });
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                // Informations de l'entreprise
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                // Texte de l'entreprise
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-                // Texte de l'adresse
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-                // Texte du téléphone
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "normal");
-                const consultationDate = new Date(facture.date);
-                // Formatter la date et l'heure séparément
-                const formattedDate = consultationDate.toLocaleDateString(); // Formater la date
-                const formattedTime = consultationDate.toLocaleTimeString();
-                doc.text("Date: " + formattedDate, 15, (yPos + 25));
-                doc.text("Heure: " + formattedTime, 15, (yPos + 30));
-                //Ligne de séparation
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-                // doc.line(10, 35, 200, 35); 
-                const titleR = "FACTURE DE CONSULTATION";
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-                // Définir le padding
-                const paddingh = 0; // Padding vertical
-                const paddingw = 15; // Padding horizontal
-                // Calculer les dimensions du rectangle
-                const rectX = titleRX - paddingw; // X du rectangle
-                const rectY = (yPos + 18) - paddingh; // Y du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
-                const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
-                // Définir la couleur pour le cadre (noir)
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
-                // Ajouter le texte centré en gras
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0); // Couleur du texte rouge
-                doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
-                const titleN = "N° "+ facture.numfac;
-                doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier = facture.numdossier ? " N° Dossier : " + facture.numdossier : " N° Dossier : Aucun";
-                const numDossierWidth = doc.getTextWidth(numDossier);
-                doc.text(numDossier, (pdfWidth - rightMargin - numDossierWidth) + 5, yPos + 25);
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier2 = facture.idenregistremetpatient ? " N° matricule : " + facture.idenregistremetpatient  : " N° matricule : Aucun";
-                const numDossierWidth2 = doc.getTextWidth(numDossier);
-                doc.text(numDossier2, (pdfWidth - rightMargin - numDossierWidth2) + 5, yPos + 30);
-
-                yPoss = (yPos + 50);
-
-                let assurer;
-
-                if (facture.assure == 1) {
-                    assurer = 'Oui';
-                } else {
-                    assurer = 'Non';
-                }
-
-                const patientInfo = [
-                    { 
-                        label: "Nom et Prénoms", 
-                        value: facture.nom_patient.length > 25 
-                            ? facture.nom_patient.substring(0, 25) + '...' 
-                            : facture.nom_patient 
-                    },
-                    { label: "Assurer", value: assurer },
-                    { label: "Age", value: calculateAge(facture.datenais)+" an(s)" },
-                    { label: "Contact", value: facture.telpatient }
-                ];
-
-                if (facture.assure == 1) {
-                    patientInfo.push(
-                        { label: "Société", value: facture.societe },
-                        { label: "Assurance", value: facture.assurance},
-                        { label: "Matricule Assurance", value: facture.matriculeassure },
-                        { label: "N° de Bon", value: facture.numbon || 'Aucun' },
-                    );
-                }
-
-                patientInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.setTextColor(0, 0, 0);
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 35, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPos + 50);
-
-                const medecinInfo = [
-                    { label: "N° Consultation", value: facture.idconsexterne},
-                    { 
-                        label: "Medecin", 
-                        value: facture.nom_medecin.length > 20 
-                            ? facture.nom_medecin.substring(0, 20) + '...' 
-                            : facture.nom_medecin 
-                    },
-                    { label: "Spécialité", value: facture.specialite },
-                    { label: "Prix Consultation", value: formatPriceT(facture.montant)+" Fcfa" },
-                ];
-
-                medecinInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.setTextColor(0, 0, 0);
-                    doc.text(info.label, leftMargin + 100, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 135, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPos + 90);
-
-                const compteInfo = [
-                    { label: "Montant Total", value: formatPriceT(facture.montant)+" Fcfa" },
-                    ...(facture.assure == 1 
-                        ? [
-                            { label: "Part assurance", value: formatPriceT(facture.partassurance)+" Fcfa" },
-                            { label: "Taux", value: facture.taux+" %" }
-                          ] 
-                        : []),
-                    { label: "Remise", value: formatPriceT(facture.remise)+" Fcfa" },
-                ];
-
-                compteInfo.forEach(info => {
-                    doc.setFontSize(9);
-                    doc.setFont("Helvetica", "bold");
-                    doc.setTextColor(0, 0, 0);
-                    doc.text(info.label, leftMargin + 100, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 135, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss += 1;
-
-                doc.setFontSize(11);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                doc.text('Montant à payer', leftMargin + 100, yPoss);
-                doc.setFont("Helvetica", "bold");
-                doc.text(": "+formatPriceT(facture.partpatient)+" Fcfa", leftMargin + 135, yPoss);
-
-                if (facture.assure == 1 ) {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.setTextColor(0, 0, 0);
-                    doc.text("Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString() , 5, yPoss + 16);
-                }else{
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.setTextColor(0, 0, 0);
-                    doc.text("Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString() , 5, yPoss + 28);
-                }
-
-            }
-
-            drawConsultationSection(yPos);
-
-            doc.setFontSize(30);
-            doc.setLineWidth(0.5);
-            doc.setLineDashPattern([3, 3], 0);
-            doc.line(0, (yPos + 137), 300, (yPos + 137));
-            doc.setLineDashPattern([], 0);
-
-            drawConsultationSection(yPos + 150);
-
-
-            doc.output('dataurlnewwindow');
-        }
-
-        function generatePDFficheCons(facture) {
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            const pdfFilename = "Fiche Consultation N°" + facture.numfac + " du " + formatDate(facture.date);
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            yPos = 10;
-
-            function drawConsultationSection(yPos) {
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                const titlea = "Fiche";
-                doc.setFontSize(100);
-                doc.setTextColor(242, 237, 237); // Gray color for background effect
-                doc.setFont("Helvetica", "bold");
-                doc.text(titlea, 120, yPos + 150, { align: 'center', angle: 40 });
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                // Informations de l'entreprise
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                // Texte de l'entreprise
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-                // Texte de l'adresse
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-                // Texte du téléphone
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "normal");
-                const consultationDate = new Date(facture.date);
-                // Formatter la date et l'heure séparément
-                const formattedDate = consultationDate.toLocaleDateString(); // Formater la date
-                const formattedTime = consultationDate.toLocaleTimeString();
-                doc.text("Date: " + formattedDate, 15, (yPos + 25));
-                doc.text("Heure: " + formattedTime, 15, (yPos + 30));
-
-                //Ligne de séparation
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-                // doc.line(10, 35, 200, 35); 
-                const titleR = "FICHE DE CONSULTATION";
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-                // Définir le padding
-                const paddingh = 0; // Padding vertical
-                const paddingw = 15; // Padding horizontal
-                // Calculer les dimensions du rectangle
-                const rectX = titleRX - paddingw; // X du rectangle
-                const rectY = (yPos + 18) - paddingh; // Y du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
-                const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
-                // Définir la couleur pour le cadre (noir)
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
-                // Ajouter le texte centré en gras
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0); // Couleur du texte rouge
-                doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
-                const titleN = "N° "+ facture.numfac;
-                doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier = facture.numdossier ? " N° Dossier : " + facture.numdossier : " N° Dossier : Aucun";
-                const numDossierWidth = doc.getTextWidth(numDossier);
-                doc.text(numDossier, (pdfWidth - rightMargin - numDossierWidth) + 5, yPos + 25);
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier2 = facture.idenregistremetpatient ? " N° matricule : " + facture.idenregistremetpatient  : " N° matricule : Aucun";
-                const numDossierWidth2 = doc.getTextWidth(numDossier);
-                doc.text(numDossier2, (pdfWidth - rightMargin - numDossierWidth2) + 5, yPos + 30);
-
-                yPoss = (yPos + 45);
-
-                let assurer;
-
-                if (facture.assure == 1) {
-                    assurer = 'Oui';
-                } else {
-                    assurer = 'Non';
-                }
-
-                const patientInfo = [
-                    { label: "Medecin", value: facture.nom_medecin },
-                    { label: "Spécialité", value: facture.specialite },
-                    { label: "Nom et Prénoms", value: facture.nom_patient },
-                    { label: "Assurer", value: assurer},
-                    { label: "Age", value: calculateAge(facture.datenais)+" an(s)" },
-                    { label: "Contact", value: facture.telpatient },
-                ];
-
-                if (facture.assure == 1) {
-                    patientInfo.push(
-                        { label: "Société", value: facture.societe },
-                        { label: "Assurance", value: facture.assurance },
-                        { label: "Filiation", value: facture.filiation },
-                        { label: "Matricule Assurance", value: facture.matriculeassure },
-                    );
-                }
-
-                patientInfo.forEach(info => {
-                    doc.setFontSize(10);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 38, yPoss);
-                    yPoss += 7;
-                });
-
-                doc.setFontSize(30);
-                doc.setLineWidth(0.5);
-                doc.line(10, yPoss, 200, yPoss);
-
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(255, 0, 0);
-                const rendu = "Compte Rendu";
-                const titleRr = doc.getTextWidth(rendu);
-                const titlerendu = (doc.internal.pageSize.getWidth() - titleRr) / 2;
-                doc.text(rendu, titlerendu, yPoss + 10);
-                // Dessiner une ligne sous le texte pour le souligner
-                const underlineY = yPoss + 12; // Ajustez cette valeur selon vos besoins
-                doc.setDrawColor(255, 0, 0);
-                doc.setLineWidth(0.5); // Épaisseur de la ligne
-                doc.line(titlerendu, underlineY, titlerendu + titleRr, underlineY);
-
-                yPoss += 25;
-                hPoss = yPoss;
-                doc.setTextColor(0, 0, 0);
-
-                const pInfo1 = [
-                    { label: "BD", value: "..........." },
-                    { label: "BG", value: "..........." },
-                ];
-
-                pInfo1.forEach(info => {
-                    doc.setFontSize(10);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 15, yPoss);
-                    yPoss += 10;
-                });
-
-                const pInfo2 = [
-                    { label: "PoulsD", value: "..........." },
-                    { label: "PoulsG", value: "..........." },
-                ];
-
-                pInfo2.forEach(info => {
-                    doc.setFontSize(10);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin + 40, yPoss - 20);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 55, yPoss - 20);
-                    yPoss += 10;
-                });
-
-                const pInfo3 = [
-                    { label: "Temps", value: "..........." },
-                    { label: "Taille", value: "..........." },
-                ];
-
-                pInfo3.forEach(info => {
-                    doc.setFontSize(10);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin + 75, yPoss - 40);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 90, yPoss - 40);
-                    yPoss += 10;
-                });
-
-                const pInfo4 = [
-                    { label: "Poids", value: "..........." },
-                    { label: "Glycemie", value: "..........." },
-                ];
-
-                pInfo4.forEach(info => {
-                    doc.setFontSize(10);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin + 110, yPoss - 60);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 130, yPoss - 60);
-                    yPoss += 10;
-                });
-
-                hPoss += 25;
-
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(225, 0, 0);
-                const motif = "Motif";
-                const titleRm = doc.getTextWidth(motif);
-                const titlemotif = (doc.internal.pageSize.getWidth() - titleRm) / 2;
-                doc.text(motif, titlemotif, hPoss);
-                // Dessiner une ligne sous le texte pour le souligner
-                const underlineYm = hPoss + 2; // Ajustez cette valeur selon vos besoins
-                doc.setDrawColor(225, 0, 0);
-                doc.setLineWidth(0.5); // Épaisseur de la ligne
-                doc.line(titlemotif, underlineYm, titlemotif + titleRm, underlineYm);
-
-                doc.setFontSize(8);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                doc.text("Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString() , 5, 295);
-
-            }
-
-            drawConsultationSection(yPos);
-
-            doc.output('dataurlnewwindow');
         }
 
         function delete_cons() {

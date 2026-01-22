@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    window.pdfFactureConsultation= function (data) 
+    window.pdfFactureConsultation = function (data) 
     {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
@@ -191,7 +191,7 @@ $(document).ready(function () {
         doc.output('dataurlnewwindow');
     }
 
-    window.pdfFicheConsultation= function (data) 
+    window.pdfFicheConsultation = function (data) 
     {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();

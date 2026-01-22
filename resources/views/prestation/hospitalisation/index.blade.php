@@ -48,23 +48,23 @@
                 <div class="card-header" hidden >
                     <h5 class="card-title">Hospitalisation</h5>
                 </div>
-                <div class="card-body" style="margin-top: -30px;">
+                <div class="card-body" style="margin-top: -20px;">
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-hotel-bed-line me-2"></i>
                                     Nouvelle admission
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-oneAAA" data-bs-toggle="tab" href="#oneAAA" role="tab" aria-controls="oneAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-oneAAA" data-bs-toggle="tab" href="#oneAAA" role="tab" aria-controls="oneAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-dossier-line me-2"></i>
                                     Liste
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link  text-white" id="tab-threeAAA" data-bs-toggle="tab" href="#threeAAA" role="tab" aria-controls="threeAAA" aria-selected="true">
+                                <a class="nav-link" id="tab-threeAAA" data-bs-toggle="tab" href="#threeAAA" role="tab" aria-controls="threeAAA" aria-selected="true">
                                     <i class="ri-list-settings-fill me-2"></i>
                                     Disponibilité Chambre & Lit
                                 </a>
@@ -595,24 +595,10 @@
 
 <script src="{{asset('jsPDF-master/dist/jspdf.umd.js')}}"></script>
 <script src="{{asset('jsPDF-AutoTable/dist/jspdf.plugin.autotable.min.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/para.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/hospitalisation.js')}}"></script>
 
 @include('select2')
-
-{{-- <script>
-    $('#Mmodif').on('shown.bs.modal', function () {
-        $('#specialite_idModif').select2({
-            theme: 'bootstrap',
-            placeholder: 'Selectionner',
-            language: {
-                noResults: function() {
-                    return "Aucun résultat trouvé";
-                }
-            },
-            width: '100%',
-            dropdownParent: $('#Mmodif'),
-        });
-    });
-</script> --}}
 
 <script>
     $(document).ready(function() {
@@ -775,7 +761,7 @@
         });
 
         $('#btn_impr_table').on('click', function() {
-            generatePDFInvoiceList(cacheddataHos, cacheddataHosDate1, cacheddataHosDate2)
+            pdfFacturehosList(cacheddataHos, cacheddataHosDate1, cacheddataHosDate2)
         });
 
         const table_hos = $('.Table_hos').DataTable({
@@ -1348,7 +1334,7 @@
                             preloader.remove();
                         }
 
-                        generatePDFInvoice(hopital, prestation);
+                        pdfFacturehos(hopital, prestation);
 
                     })
                     .catch(error => {
@@ -1382,7 +1368,7 @@
 
                         if (factureds.length > 0) {
 
-                            generatePDFInvoiceProduit(hopital, factureds);
+                            pdfFacturehosdetailProd(hopital, factureds);
 
                         } else {
                             showAlert('Alert', 'Aucun produit n\'a été trouvé.', 'warning');
@@ -1560,14 +1546,6 @@
             });
         }
 
-        function showAlert(title, message, type) {
-            Swal.fire({
-                title: title,
-                text: message,
-                icon: type,
-            });
-        }
-
         function select_medecin() {
 
             const $selectElement = $('#medecin_id');
@@ -1701,35 +1679,6 @@
                     console.error('Erreur lors du chargement des natures d\'admission');
                 }
             });
-        }
-
-        function formatPrice(input) {
-            // Remove all non-numeric characters except the comma
-            input = input.replace(/[^\d,]/g, '');
-
-            // Convert comma to dot for proper float conversion
-            input = input.replace(',', '.');
-
-            // Convert to float and round to the nearest whole number
-            let number = Math.round(parseFloat(input));
-            if (isNaN(number)) {
-                return '';
-            }
-
-            // Format the number with dot as thousands separator
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function formatPriceT(price) {
-
-            // Convert to float and round to the nearest whole number
-            let number = Math.round(parseInt(price));
-            if (isNaN(number)) {
-                return '';
-            }
-
-            // Format the number with dot as thousands separator
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         function calculerJours() {
@@ -2487,47 +2436,6 @@
             });
         });
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');  // Ajoute un '0' si le jour est à un chiffre
-            const month = String(date.getMonth() + 1).padStart(2, '0');  // Les mois sont indexés de 0, donc +1
-            const year = date.getFullYear();
-            
-            return `${day}-${month}-${year}`;
-        }
-
-        function formatDateHeure(dateString) {
-
-            const date = new Date(dateString);
-                
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} à ${hours}:${minutes}:${seconds}`;
-        }
-
-        function calculateAge(dateString) 
-        {
-            const birthDate = new Date(dateString);
-            const today = new Date();
-
-            let age = today.getFullYear() - birthDate.getFullYear();
-
-            // Vérifie si l'anniversaire n'est pas encore passé cette année
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            const dayDiff = today.getDate() - birthDate.getDate();
-            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-                age--;
-            }
-
-            return age;
-        }
-
         function calculateDaysBetween(startDate, endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
@@ -2633,559 +2541,6 @@
             paginationDiv.appendChild(paginationWrapper);
         }
 
-        function generatePDFInvoice(hopital, prestation) 
-        {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "HOSPITALISATION Facture N°" + hopital.numfachospit + " du " + formatDateHeure(hopital.created_at);
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            let yPos = 10;
-
-            function drawConsultationSection(yPos) {
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                const titlea = "Facture";
-                doc.setFontSize(100);
-                doc.setTextColor(242, 242, 242); // Gray color for background effect
-                doc.setFont("Helvetica", "bold");
-                doc.text(titlea, 120, yPos + 120, { align: 'center', angle: 40 });
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                // Informations de l'entreprise
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                // Texte de l'entreprise
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-                // Texte de l'adresse
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-                // Texte du téléphone
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "normal");
-                const hopitalDate = new Date(hopital.created_at);
-                // Formatter la date et l'heure séparément
-                const formattedDate = hopitalDate.toLocaleDateString(); // Formater la date
-                const formattedTime = hopitalDate.toLocaleTimeString();
-                doc.text("Date: " + formattedDate, 15, (yPos + 25));
-                doc.text("Heure: " + formattedTime, 15, (yPos + 30));
-
-                //Ligne de séparation
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-                // doc.line(10, 35, 200, 35); 
-                const titleR = "FACTURE HOSPITALISATION";
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-                // Définir le padding
-                const paddingh = 0; // Padding vertical
-                const paddingw = 15; // Padding horizontal
-                // Calculer les dimensions du rectangle
-                const rectX = titleRX - paddingw; // X du rectangle
-                const rectY = (yPos + 18) - paddingh; // Y du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
-                const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
-                // Définir la couleur pour le cadre (noir)
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
-                // Ajouter le texte centré en gras
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0); // Couleur du texte rouge
-                doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
-                const titleN = "N° "+hopital.numfachospit;
-                doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier = hopital.numdossier ? " N° Dossier : " + hopital.numdossier : " N° Dossier : Aucun";
-                const numDossierWidth = doc.getTextWidth(numDossier);
-                doc.text(numDossier, (pdfWidth - rightMargin - numDossierWidth) + 5, yPos + 25);
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier2 = hopital.idenregistremetpatient ? " N° matricule : " + hopital.idenregistremetpatient  : " N° matricule : Aucun";
-                const numDossierWidth2 = doc.getTextWidth(numDossier);
-                doc.text(numDossier2, (pdfWidth - rightMargin - numDossierWidth2) + 5, yPos + 30);
-
-                yPoss = (yPos + 40);
-
-                let assurer;
-
-                if (hopital.assure == 1) {
-                    assurer = 'Oui';
-                } else {
-                    assurer = 'Non';
-                }
-
-                const patientInfo = [
-                    { 
-                        label: "Nom et Prénoms", 
-                        value: hopital.patient.length > 25 
-                            ? hopital.patient.substring(0, 25) + '...' 
-                            : hopital.patient 
-                    },
-                    { label: "Assurer", value: assurer },
-                    { label: "Age", value: calculateAge(hopital.datenais)+" an(s)" },
-                    { label: "Contact", value: hopital.telpatient }
-                ];
-
-                if (hopital.assure == 1) {
-                    patientInfo.push(
-                        { label: "Société", value: hopital.societe },
-                        { label: "Assurance", value: hopital.assurance},
-                        { label: "Matricule Assurance", value: hopital.matriculeassure },
-                        { label: "N° de Bon", value: hopital.numbon || 'Aucun' },
-                    );
-                }
-
-                // patientInfo.push(
-                //     { label: "Motif", value: hopital.motifhospit == null || hopital.motifhospit == '' ? 'Aucun' : hopital.motifhospit },
-                // );
-
-                patientInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 35, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPos + 40);
-
-                const medecinInfo = [];
-
-                if (hopital.numbon && hopital.numbon !== null) {
-                    medecinInfo.push({ label: "N° prise en charge", value: hopital.numbon });
-                }
-
-                medecinInfo.push(
-                    { label: "Id hospitalisation", value: hopital.numhospit },
-                    { 
-                        label: "Medecin", 
-                        value: hopital.medecin.length > 20 
-                            ? hopital.medecin.substring(0, 20) + '...' 
-                            : hopital.medecin 
-                    },
-                    { label: "Spécialité", value: hopital.specialite },
-                    { label: "Date d'entrée le ", value: formatDate(hopital.dateentree) },
-                    { label: "Date de sortie prévu le ", value: formatDate(hopital.datesortie) },
-                    { label: "Nombre de jours ", value: calculateDaysBetween(hopital.dateentree, hopital.datesortie)+" Jour(s)" },
-                    { label: "Chambre Occupée", value: "CH-"+hopital.chambre_code },
-                    { label: "Lit Occupée", value: "LIT-"+hopital.lit_code+"/"+hopital.lit_type },
-                    { label: "Prix Chambre", value: formatPriceT(hopital.chambre_prix)+" Fcfa" },
-                );
-
-                medecinInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin + 100, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 135, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPos + 97);
-
-                const typeInfo = [
-                    { label: "Type d'admission", value: hopital.type_hospit },
-                    { label: "Nature d'admission", value: hopital.nature_hospit },
-                ];
-
-                typeInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 35, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPoss);
-
-                const donneeTable = prestation;
-
-                let totalGeneral = 0;
-                let totalAssurance = 0; // Total Part Assurance
-                let totalPatient = 0;
-
-                if (donneeTable.length > 0) {
-                    yPossT = yPoss + 10;
-                    doc.autoTable({
-                        startY: yPossT,
-                        head: [['N°', 'Nom de la prestation', 'Montant Total', 'Part Assurance', 'Part Patient']],
-                        body: donneeTable.map((item, index) => {
-                            totalPatient += item.prix_pat || 0;
-                            totalAssurance += item.prix_ass || 0;
-                            totalGeneral += item.prix || 0;
-
-                            return [
-                                index + 1,
-                                item.name, 
-                                formatPriceT(item.prix) + " Fcfa",
-                                formatPriceT(item.prix_ass) + " Fcfa",
-                                formatPriceT(item.prix_pat) + " Fcfa"
-                            ];
-                        }),
-                        theme: 'striped',
-                        tableWidth: 'auto',
-                        styles: {
-                            fontSize: 7,
-                            overflow: 'linebreak',
-                        },
-                        foot: [
-                            [
-                                { content: 'Totals', colSpan: 2, styles: { halign: 'center', fontStyle: 'bold' } },
-                                { content: formatPriceT(totalGeneral) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                { content: formatPriceT(totalAssurance) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                { content: formatPriceT(totalPatient) + " Fcfa", styles: { fontStyle: 'bold' } },
-                            ],
-                        ],
-                    });
-
-                    const finalY = doc.autoTable.previous.finalY || yPossT + 10;
-                    yPoss = finalY + 10;
-
-                    const finalInfo = [
-                        { label: "Montant Total", value: formatPriceT(hopital.montant_total) + " Fcfa" },
-                        ...(hopital.assure === 1 ? [{ label: "Part assurance", value: formatPriceT(hopital.montant_ass) + " Fcfa" }] : []),
-                        { label: "Remise", value: formatPriceT(hopital.remise) + " Fcfa" },
-                    ];
-
-                    if (hopital.assure === 1) {
-                        finalInfo.push({ label: "Taux", value: hopital.taux + "%" });
-                    }
-
-                    finalInfo.forEach(info => {
-                        doc.setFontSize(9);
-                        doc.setFont("Helvetica", "bold");
-                        doc.text(info.label, leftMargin + 110, yPoss);
-                        doc.setFont("Helvetica", "normal");
-                        doc.text(": " + info.value, leftMargin + 150, yPoss);
-                        yPoss += 7;
-                    });
-
-                    doc.setFontSize(11);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text('Montant à payer', leftMargin + 110, yPoss);
-                    doc.text(": " + formatPriceT(hopital.montant_pat) + " Fcfa", leftMargin + 150, yPoss);
-                } else {
-                    yPoss += 7;
-
-                    const finalInfo = [
-                        { label: "Montant Total", value: formatPriceT(hopital.montant_total) + " Fcfa" },
-                        ...(hopital.assure === 1 ? [{ label: "Part assurance", value: formatPriceT(hopital.montant_ass) + " Fcfa" }] : []),
-                    ];
-
-                    if (hopital.assure === 1) {
-                        finalInfo.push({ label: "Taux", value: hopital.taux + "%" });
-                    }
-
-                    finalInfo.forEach(info => {
-                        doc.setFontSize(9);
-                        doc.setFont("Helvetica", "bold");
-                        doc.text(info.label, leftMargin + 110, yPoss);
-                        doc.setFont("Helvetica", "normal");
-                        doc.text(": " + info.value, leftMargin + 150, yPoss);
-                        yPoss += 7;
-                    });
-
-                    doc.setFontSize(11);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text('Montant à payer', leftMargin + 110, yPoss);
-                    doc.text(": " + formatPriceT(hopital.montant_pat) + " Fcfa", leftMargin + 150, yPoss);
-                }
-
-
-            }
-
-            function addFooter() {
-                // Add footer with current date and page number in X/Y format
-                const pageCount = doc.internal.getNumberOfPages();
-                const footerY = doc.internal.pageSize.getHeight() - 2; // 10 mm from the bottom
-
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(0, 0, 0);
-                    const pageText = `Page ${i} sur ${pageCount}`;
-                    const pageTextWidth = doc.getTextWidth(pageText);
-                    const centerX = (doc.internal.pageSize.getWidth() - pageTextWidth) / 2;
-                    doc.text(pageText, centerX, footerY);
-                    doc.text("Imprimé le : " + new Date().toLocaleDateString() + " à " + new Date().toLocaleTimeString(), 15, footerY); // Left-aligned
-                }
-            }
-
-            drawConsultationSection(yPos);
-
-            addFooter();
-
-            doc.output('dataurlnewwindow');
-        }
-
-        function generatePDFInvoiceProduit(hopital, factureds) 
-        {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "HOSPITALISATION Facture N°" + hopital.numfachospit + " du " + formatDateHeure(hopital.created_at);
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            let yPos = 10;
-
-            function drawConsultationSection(yPos) {
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                const titlea = "Facture";
-                doc.setFontSize(100);
-                doc.setTextColor(242, 242, 242); // Gray color for background effect
-                doc.setFont("Helvetica", "bold");
-                doc.text(titlea, 120, yPos + 120, { align: 'center', angle: 40 });
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                // Informations de l'entreprise
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                // Texte de l'entreprise
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-                // Texte de l'adresse
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-                // Texte du téléphone
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "normal");
-                const hopitalDate = new Date(hopital.created_at);
-                // Formatter la date et l'heure séparément
-                const formattedDate = hopitalDate.toLocaleDateString(); // Formater la date
-                const formattedTime = hopitalDate.toLocaleTimeString();
-                doc.text("Date: " + formattedDate, 15, (yPos + 25));
-                doc.text("Heure: " + formattedTime, 15, (yPos + 30));
-
-                //Ligne de séparation
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-                // doc.line(10, 35, 200, 35); 
-                const titleR = "LISTE DES PRODUITS";
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-                // Définir le padding
-                const paddingh = 0; // Padding vertical
-                const paddingw = 15; // Padding horizontal
-                // Calculer les dimensions du rectangle
-                const rectX = titleRX - paddingw; // X du rectangle
-                const rectY = (yPos + 18) - paddingh; // Y du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
-                const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
-                // Définir la couleur pour le cadre (noir)
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
-                // Ajouter le texte centré en gras
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0); // Couleur du texte rouge
-                doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
-                const titleN = "N° "+hopital.numfachospit;
-                doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier = hopital.numdossier ? " N° Dossier : " + hopital.numdossier : " N° Dossier : Aucun";
-                const numDossierWidth = doc.getTextWidth(numDossier);
-                doc.text(numDossier, (pdfWidth - rightMargin - numDossierWidth) + 5, yPos + 25);
-
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDossier2 = hopital.idenregistremetpatient ? " N° matricule : " + hopital.idenregistremetpatient  : " N° matricule : Aucun";
-                const numDossierWidth2 = doc.getTextWidth(numDossier);
-                doc.text(numDossier2, (pdfWidth - rightMargin - numDossierWidth2) + 5, yPos + 30);
-
-                {{-- doc.setFontSize(10);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0);
-                const numDate = "Liste des Produits Utilisés" ;
-                const numDateWidth = doc.getTextWidth(numDate);
-                doc.text(numDate, (doc.internal.pageSize.getWidth() - numDateWidth) / 2, yPos + 40);  --}}     
-
-                yPoss = (yPos + 45);
-
-                let assurer;
-
-                if (hopital.assure == 1) {
-                    assurer = 'Oui';
-                } else {
-                    assurer = 'Non';
-                }
-
-                const patientInfo = [];
-
-                patientInfo.push(
-                    { 
-                        label: "Nom et Prénoms", 
-                        value: hopital.patient.length > 25 
-                            ? hopital.patient.substring(0, 25) + '...' 
-                            : hopital.patient 
-                    },
-                    { label: "Assurer", value: assurer },
-                );
-
-                if (hopital.assure == 1) {
-                    patientInfo.push({ label: "Assurance", value: hopital.assurance });
-                }
-
-                patientInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 35, yPoss);
-                    yPoss += 7;
-                });
-
-                yPoss = (yPos + 45);
-
-                const medecinInfo = [];
-
-                if (hopital.numbon && hopital.numbon !== null) {
-                    medecinInfo.push({ label: "N° prise en charge", value: hopital.numbon });
-                }
-
-                medecinInfo.push(
-                    { 
-                        label: "Medecin", 
-                        value: hopital.medecin.length > 20 
-                            ? hopital.medecin.substring(0, 20) + '...' 
-                            : hopital.medecin 
-                    },
-                    { label: "Spécialité", value: hopital.specialite },
-                );
-
-                medecinInfo.forEach(info => {
-                    doc.setFontSize(8);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(info.label, leftMargin + 100, yPoss);
-                    doc.setFont("Helvetica", "normal");
-                    doc.text(": " + info.value, leftMargin + 135, yPoss);
-                    yPoss += 7;
-                });
-
-                const donneeTable = factureds;
-
-                let totalGeneral = 0;
-
-                yPossT = yPoss + 5;
-                doc.autoTable({
-                    startY: yPossT,
-                    head: [['N°', 'Nom du produit', 'Assurance', 'Taux', 'Prix Unitaire', 'Quantité', 'Prix Total']],
-                    body: donneeTable.map((item, index) => {
-
-                        const prixTotal = parseFloat(item.prix_t) || 0;
-                        const prixUnitaire = parseFloat(item.prix_u) || 0;
-                        const quantite = parseInt(item.quantite) || 0;
-
-                        totalGeneral += prixTotal || 0;
-
-                        const assu = item.partassurance > 0 ? `Oui` : `Non`;
-                        const taux = item.partassurance > 0 ? item.taux : 0;
-
-                        return [
-                            index + 1,
-                            item.name, 
-                            assu,
-                            taux + "%",
-                            formatPriceT(prixUnitaire) + " Fcfa",
-                            quantite,
-                            formatPriceT(prixTotal) + " Fcfa"
-                        ];
-                    }),
-                    theme: 'striped',
-                    tableWidth: 'auto',
-                    styles: {
-                        fontSize: 7,
-                        overflow: 'linebreak',
-                    },
-                    foot: [
-                        [
-                            { content: 'Totals', colSpan: 6, styles: { halign: 'center', fontStyle: 'bold' } },
-                            { content: formatPriceT(totalGeneral) + " Fcfa", styles: { fontStyle: 'bold' } },
-                        ],
-                    ],
-                });
-
-
-            }
-
-            function addFooter() {
-                // Add footer with current date and page number in X/Y format
-                const pageCount = doc.internal.getNumberOfPages();
-                const footerY = doc.internal.pageSize.getHeight() - 2; // 10 mm from the bottom
-
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(0, 0, 0);
-                    const pageText = `Page ${i} sur ${pageCount}`;
-                    const pageTextWidth = doc.getTextWidth(pageText);
-                    const centerX = (doc.internal.pageSize.getWidth() - pageTextWidth) / 2;
-                    doc.text(pageText, centerX, footerY);
-                    doc.text("Imprimé le : " + new Date().toLocaleDateString() + " à " + new Date().toLocaleTimeString(), 15, footerY); // Left-aligned
-                }
-            }
-
-            drawConsultationSection(yPos);
-
-            addFooter();
-
-            doc.output('dataurlnewwindow');
-        }
-
         function Statistique() {
 
             const $nbreDay = $('#nbre_hos');
@@ -3202,168 +2557,6 @@
                     $nbreDay.text('0');
                 }
             });
-        }
-
-        function generatePDFInvoiceList(data, date1, date2) 
-        {
-
-            var preloader_ch = `
-                <div id="preloader_ch">
-                    <div class="spinner_preloader_ch"></div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', preloader_ch);
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "Liste des patients hospitalisés du " + date1 + " au " + date2;
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            let yPos = 10;
-
-            function drawConsultationSection(yPos) {
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                const titlea = "Liste";
-                doc.setFontSize(100);
-                doc.setTextColor(242, 242, 242); // Gray color for background effect
-                doc.setFont("Helvetica", "bold");
-                doc.text(titlea, 120, yPos + 120, { align: 'center', angle: 40 });
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                // Informations de l'entreprise
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-                // Texte de l'entreprise
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-                // Texte de l'adresse
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-                // Texte du téléphone
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-                doc.setFontSize(10);
-                doc.setFont("Helvetica", "normal");
-
-                //Ligne de séparation
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-                // doc.line(10, 35, 200, 35); 
-                const titleR = "LISTE DES PATIENTS HOSPITALISES";
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-                // Définir le padding
-                const paddingh = 0; // Padding vertical
-                const paddingw = 15; // Padding horizontal
-                // Calculer les dimensions du rectangle
-                const rectX = titleRX - paddingw; // X du rectangle
-                const rectY = (yPos + 18) - paddingh; // Y du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
-                const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
-                // Définir la couleur pour le cadre (noir)
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
-                // Ajouter le texte centré en gras
-                doc.setFontSize(15);
-                doc.setFont("Helvetica", "bold");
-                doc.setTextColor(0, 0, 0); // Couleur du texte rouge
-                doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
-                const titleN = "du " + date1 + " au " + date2;
-                doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));     
-                yPoss = (yPos + 40);
-
-                const donneeTable = data;
-
-                let totalGeneral = 0;
-
-                yPossT = yPoss + 10;
-                doc.autoTable({
-                    startY: yPossT,
-                    head: [['N°', 'Identifiant', 'Patient', 'Type', 'Nature', 'Date entrée', 'Date sortie', 'Nbre jours', 'Médecin', 'Statut', 'Montant', 'N° Facture']],
-                    body: donneeTable.map((item, index) => {
-
-                        const prixTotal = parseFloat(item.montant_total) || 0;
-
-                        totalGeneral += prixTotal || 0;
-
-                        return [
-                            index + 1,
-                            item.numhospit,
-                            item.patient,
-                            item.type_hospit, 
-                            item.nature_hospit,
-                            formatDate(item.dateentree),
-                            formatDate(item.datesortie),
-                            item.nbredejrs,
-                            item.medecin,
-                            item.statut,
-                            formatPriceT(item.montant_total) + " Fcfa",
-                            item.numfachospit
-                        ];
-                    }),
-                    theme: 'striped',
-                    tableWidth: 'auto',
-                    styles: {
-                        fontSize: 7,
-                        overflow: 'linebreak',
-                    },
-                    foot: [
-                        [
-                            { content: 'Totals', colSpan: 10, styles: { halign: 'center', fontStyle: 'bold' } },
-                            { content: formatPriceT(totalGeneral) + " Fcfa", styles: { fontStyle: 'bold' } },
-                            { content: '' },
-                        ],
-                    ],
-                });
-
-
-            }
-
-            function addFooter() {
-                // Add footer with current date and page number in X/Y format
-                const pageCount = doc.internal.getNumberOfPages();
-                const footerY = doc.internal.pageSize.getHeight() - 2; // 10 mm from the bottom
-
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(0, 0, 0);
-                    const pageText = `Page ${i} sur ${pageCount}`;
-                    const pageTextWidth = doc.getTextWidth(pageText);
-                    const centerX = (doc.internal.pageSize.getWidth() - pageTextWidth) / 2;
-                    doc.text(pageText, centerX, footerY);
-                    doc.text("Imprimé le : " + new Date().toLocaleDateString() + " à " + new Date().toLocaleTimeString(), 15, footerY); // Left-aligned
-                }
-            }
-
-            drawConsultationSection(yPos);
-
-            addFooter();
-
-            document.getElementById('preloader_ch').remove();
-
-            doc.output('dataurlnewwindow');
         }
 
     });

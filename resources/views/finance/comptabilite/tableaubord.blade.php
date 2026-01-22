@@ -22,8 +22,8 @@
 <div class="app-body">
     <div class="row">
         <div class="col-12">
-            <div class="card bg-2 mb-3 rounded-2" >
-                <div class="card-body rounded-2" style="background: rgba(0, 0, 0, 0.7);">
+            <div class="card mb-3 rounded-2" style="background: #0f1115 url('assets/images/bg3.jpg') no-repeat; background-position: center -70px;">
+                <div class="card-body rounded-2" style="background: rgba(0, 0, 0, 0.1);">
                     <div class="card-header d-flex align-items-center justify-content-between" style="background: transparent;" >
                         <h5 class="card-title text-white">Solde Caisse</h5>
                         <div class="d-flex">

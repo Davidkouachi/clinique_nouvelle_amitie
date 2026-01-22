@@ -22,10 +22,11 @@
 <div class="app-body">
     <div class="row gx-3">
         <div class="col-xxl-12 col-sm-12">
-            <div class="card mb-3 bg-3">
-                <div class="card-body" style="background: rgba(0, 0, 0, 0.7);">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
                     <div class="py-4 px-3 text-white">
-                        <h5>OPERATION DE CAISSE</h5>
+                        <h3>OPERATION DE CAISSE</h3>
+                        <h6>Comptabilité / Opération de Caisse</h6>
                         <div class="mt-4 row gx-3">
                             <div class="d-flex align-items-center col-xxl-3 col-lg-4 col-sm-6 col-12 mb-3 ">
                                 <div class="icon-box lg bg-success rounded-5 me-3">
@@ -49,19 +50,19 @@
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-twoAAAN" data-bs-toggle="tab" href="#twoAAAN" role="tab" aria-controls="twoAAAN" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-twoAAAN" data-bs-toggle="tab" href="#twoAAAN" role="tab" aria-controls="twoAAAN" aria-selected="false" tabindex="-1">
                                     <i class="ri-swap-3-line me-2"></i>
                                     Nouvelle Opération
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-upload-cloud-line me-2"></i>
                                     Historique Caisse
                                 </a>
                             </li>
                             {{-- <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-tAAA" data-bs-toggle="tab" href="#tAAA" role="tab" aria-controls="tAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-tAAA" data-bs-toggle="tab" href="#tAAA" role="tab" aria-controls="tAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-upload-cloud-line me-2"></i>
                                     Bilan Journalier
                                 </a>
@@ -170,15 +171,15 @@
                             <div class="tab-pane fade" id="twoAAA" role="tabpanel" aria-labelledby="tab-twoAAA">
                                 <div class="card-body" style="margin-top: -30px;">
                                     <div class="custom-tabs-container">
-                                        <ul class="nav nav-tabs justify-content-center " id="customTab4" role="tablist">
+                                        <ul class="nav nav-tabs justify-content-left " id="customTab4" role="tablist">
                                             <li class="nav-item" role="presentation">
-                                                <a class="nav-link active text-dark" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
+                                                <a class="nav-link active" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
                                                     <i class="ri-swap-3-line me-2"></i>
                                                     Opérations de Caisse
                                                 </a>
                                             </li>
                                             <li class="nav-item" role="presentation">
-                                                <a class="nav-link text-dark" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
+                                                <a class="nav-link" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
                                                     <i class="ri-swap-3-line me-2"></i>
                                                     Ouvertures et Fermetures de Caisse
                                                 </a>

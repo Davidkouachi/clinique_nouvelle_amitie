@@ -22,12 +22,11 @@
 <div class="app-body">
     <div class="row gx-3">
         <div class="col-xxl-12 col-sm-12">
-            <div class="card mb-3 bg-3">
-                <div class="card-body" style="background: rgba(0, 0, 0, 0.7);">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
                     <div class="py-4 px-3 text-white">
-                        <h5>LISTE DES DEPOTS DE FACTURES</h5>
-                        {{-- <h2>{{Auth::user()->sexe.'. '.Auth::user()->name}}</h2> --}}
-                        <p>Gestions de Factures(Assurance) / Liste des depôts de Factures</p>
+                        <h3>LISTE DES DEPÔTS DE FACTURES</h3>
+                        <h6>Gestions Factures / Liste des Dépôts</h6>
                     </div>
                 </div>
             </div>

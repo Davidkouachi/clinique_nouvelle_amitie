@@ -12,6 +12,8 @@
  * sidebar-menu
  * app-footer
  * custom-tabs-container
+ * sidebarMenuScroll
+ * sidebar-contact
  */
 
 :root,
@@ -88,7 +90,7 @@
     --bs-body-font-size: 0.9rem;
     --bs-body-font-weight: 400;
     --bs-body-line-height: 1.5;
-    --bs-body-color: #272727;
+    --bs-body-color: #606060;
     --bs-body-color-rgb: 39, 39, 39;
     --bs-body-bg: #fff;
     --bs-body-bg-rgb: 255, 255, 255;
@@ -15640,30 +15642,41 @@ input[type=file]::file-selector-button {
 .custom-tabs-container .nav-tabs {
     margin: 0 -16px;
     border-bottom: 1px solid #cdd6dc;
-    background: #eb6325;
+    background: #fff;
 }
 
 .custom-tabs-container .nav-tabs .nav-link {
     padding: .5rem 1rem;
-    color: #fff;
+    color: #eb6325;
 }
 
 .custom-tabs-container .nav-tabs .nav-link.active {
-    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #b23500;
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #eb6325;
     color: #fff;
-    background: rgba(0, 0, 0, 0);
-    border-bottom-width: 3px
+    background: #eb6325;
+    border-bottom-width: 3px;
+    i{
+       color: #fff; 
+    }
 }
 
 .custom-tabs-container .nav-tabs .nav-link i {
     font-size: 1.3rem;
     margin-right: 7px;
-    vertical-align: middle
+    vertical-align: middle;
+}
+
+.custom-tabs-container .nav-tabs .nav-link {
+    color: #eb6325;
+}
+
+.custom-tabs-container .nav-tabs .nav-link > i {
+    color: #eb6325;
 }
 
 .custom-tabs-container .nav-tabs .nav-link:hover {
     border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #d8e2eb;
-    border-bottom-width: 3px
+    border-bottom-width: 3px;
 }
 
 .custom-tabs-container .nav-tabs .nav-item:first-child {
@@ -16206,13 +16219,76 @@ input[type=file]::file-selector-button {
     position: absolute;
     right: 15px;
     top: 14px;
-    color: #000;
+    color: #eb6325;
     transition: all .5s
 }
 
 .sidebar-menu>li.treeview.active:after {
-    transform: rotate(-90deg)
+    transform: rotate(-90deg);
+    color: #fff;
 }
+
+.sidebar-menu>li:hover.treeview:after{
+    color: #fff;
+}
+
+/* ----------------------------------------------------------*/
+
+/* Sous-menu : retirer le bullet par défaut */
+.sidebar-menu .treeview-menu {
+    list-style: none;
+    padding-left: 0;
+    margin: 5px 0;
+}
+
+/* Positionnement des items */
+.sidebar-menu .treeview-menu > li {
+    position: relative;
+}
+
+/* Petit point personnalisé MENU*/
+.sidebar-menu .treeview-menu > li {
+    position: relative;
+}
+
+.sidebar-menu .treeview-menu > li::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 3px;
+    background-color: #eb6325;
+    border-radius: 20%;
+    transition: all 0.3s ease;
+}
+
+/* Petit point personnalisé SOUS-MENU*/
+.sidebar-menu .treeview-menu > li > .treeview-menu > li {
+    position: relative;
+}
+
+.sidebar-menu .treeview-menu > li > .treeview-menu > li::before {
+    content: "";
+    position: absolute;
+    left: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: #eb6325;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+
+/* Ne pas afficher le point pour les items avec sous-menu */
+/*.sidebar-menu .treeview-menu > li.active:has(> ul)::before {
+    display: none;
+}*/
+
+/* ----------------------------------------------------------*/
 
 .sidebar-menu>li>a {
     padding: 7px 25px 7px 15px;
@@ -16221,7 +16297,7 @@ input[type=file]::file-selector-button {
     border-left: 3px solid rgba(0, 0, 0, 0);
     color: #eb6325;
     white-space: nowrap;
-    font-size: .95rem
+    font-size: .95rem;
 }
 
 .sidebar-menu>li>a>i {
@@ -16244,9 +16320,6 @@ input[type=file]::file-selector-button {
     color: #fff;
     background: #eb6325;
     border-left-color: #eb6325;
-    span{
-        color: #fff;
-    }
 }
 
 .sidebar-menu>li:hover>a i {
@@ -16254,8 +16327,9 @@ input[type=file]::file-selector-button {
     color: #eb6325
 }
 
-.sidebar-menu>li>.treeview-menu {
-    padding: 0
+.sidebar-menu>li:hover>a i {
+    background: #fff;
+    color: #eb6325
 }
 
 .sidebar-menu>li .menu-title {
@@ -16292,7 +16366,7 @@ input[type=file]::file-selector-button {
 }
 
 .sidebar-menu>li.current-page>a:hover {
-    color: #eb6325
+    color: #fff;
 }
 
 .sidebar-menu>li.current-page>a i {

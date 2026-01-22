@@ -20,6 +20,18 @@
 @section('content')
 
 <div class="app-body">
+    <div class="row gx-3">
+        <div class="col-xxl-12 col-sm-12">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
+                    <div class="py-4 px-3 text-white">
+                        <h3>Médecin</h3>
+                        <h6>Configurations / Médecin & Spécialité / Médecin</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row gx-3" >
         <div class="col-sm-12">
             <div class="card mb-3 mt-3">
@@ -27,15 +39,15 @@
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-twoAAAN" data-bs-toggle="tab" href="#twoAAAN" role="tab" aria-controls="twoAAAN" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-twoAAAN" data-bs-toggle="tab" href="#twoAAAN" role="tab" aria-controls="twoAAAN" aria-selected="false" tabindex="-1">
                                     <i class="ri-user-add-line me-2"></i>
-                                    Nouveau Médecin
+                                    Nouveau
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoAAA" data-bs-toggle="tab" href="#twoAAA" role="tab" aria-controls="twoAAA" aria-selected="false" tabindex="-1">
                                     <i class="ri-contacts-line me-2"></i>
-                                    Liste des Médecins
+                                    Liste
                                 </a>
                             </li>
                         </ul>

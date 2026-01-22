@@ -27,7 +27,7 @@
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white active" id="tab-deleteFac" data-bs-toggle="tab" href="#deleteFac" role="tab" aria-controls="deleteFac" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-deleteFac" data-bs-toggle="tab" href="#deleteFac" role="tab" aria-controls="deleteFac" aria-selected="false" tabindex="-1">
                                     <i class="ri-article-line me-2"></i>
                                     UD Facture
                                 </a>

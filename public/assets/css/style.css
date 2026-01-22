@@ -410,3 +410,15 @@
         background-size: 200% 200%;
     }
 }
+
+
+
+.cadreTitle{
+    background: #0f1115 url('../images/bg3.jpg') no-repeat; 
+    background-size: cover; 
+    background-position: center -70px;
+}
+
+.cadreTitle .card-body{
+    background: rgba(0, 0, 0, 0.1);
+}

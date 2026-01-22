@@ -20,32 +20,44 @@
 @section('content')
 
 <div class="app-body">
+    <div class="row gx-3">
+        <div class="col-xxl-12 col-sm-12">
+            <div class="card mb-3 cadreTitle">
+                <div class="card-body">
+                    <div class="py-4 px-3 text-white">
+                        <h3>FACTURES</h3>
+                        <h6>Caisse / Liste des Factures</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row gx-3" >
         <div class="col-sm-12">
             <div class="card mb-3">
-                <div class="card-body" style="margin-top: -30px;">
+                <div class="card-body" style="margin-top: -20px;">
                     <div class="custom-tabs-container">
                         <ul class="nav nav-tabs justify-content-left" id="customTab4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active text-white" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
+                                <a class="nav-link active" id="tab-twoA1" data-bs-toggle="tab" href="#twoA1" role="tab" aria-controls="twoA1" aria-selected="false" tabindex="-1">
                                     <i class="ri-article-line me-2"></i>
                                     Consulation(s)
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoA2" data-bs-toggle="tab" href="#twoA2" role="tab" aria-controls="twoA2" aria-selected="false" tabindex="-1">
                                     <i class="ri-article-line me-2"></i>
                                     Examen(s)
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoA3" data-bs-toggle="tab" href="#twoA3" role="tab" aria-controls="twoA3" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoA3" data-bs-toggle="tab" href="#twoA3" role="tab" aria-controls="twoA3" aria-selected="false" tabindex="-1">
                                     <i class="ri-article-line me-2"></i>
                                     Hospitalisation(s)
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link text-white" id="tab-twoA4" data-bs-toggle="tab" href="#twoA4" role="tab" aria-controls="twoA4" aria-selected="false" tabindex="-1">
+                                <a class="nav-link" id="tab-twoA4" data-bs-toggle="tab" href="#twoA4" role="tab" aria-controls="twoA4" aria-selected="false" tabindex="-1">
                                     <i class="ri-article-line me-2"></i>
                                     Soins Ambulatoire(s)
                                 </a>

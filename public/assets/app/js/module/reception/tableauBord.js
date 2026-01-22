@@ -1425,7 +1425,7 @@ $(document).ready(function() {
         page.html(`
             <div class="d-flex justify-content-center align-items-center mb-3">
                 <div class="spinner-border text-warning me-2" role="status" aria-hidden="true"></div>
-                <strong class="text-white">Chargement des données...</strong>
+                <strong class="text-dark">Chargement des données...</strong>
             </div>
         `);
 
@@ -1439,24 +1439,31 @@ $(document).ready(function() {
                 page.html('<div class="row g-3" id="content_stat_fac2"></div>');
 
                 $.each(table, function(index, item) {
-                    const colorClass = item.pourcentage >= 0 ? 'bg-success' : 'bg-danger';
-                    const arrowIcon = item.pourcentage >= 0 
-                        ? '<i class="ri-arrow-right-up-line ms-1 fw-bold text-white"></i>'
-                        : '<i class="ri-arrow-right-down-line ms-1 fw-bold text-white"></i>';
-                    const pourcentageClass = item.pourcentage >= 0 ? 'text-success' : 'text-danger';
+                    const colorClass = item.pourcentage > 0 ? 'bg-success' : item.pourcentage == 0 ? 'bg-primary' :'bg-danger';
+                    const colorC = item.pourcentage > 0 ? 'success' : item.pourcentage == 0 ? 'primary' :'danger';
+                    const arrowIcon = item.pourcentage > 0 
+                        ? 'ri-arrow-right-up-line'
+                        : item.pourcentage == 0 
+                            ? 'ri-arrow-left-right-line' 
+                            : 'ri-arrow-right-down-line';
+                    const pourcentageClass = item.pourcentage > 0 ? 'text-success' : item.pourcentage == 0 ? 'text-primary' :'text-danger';
 
                     const row = $(`
                         <div class="col-lg-3 col-sm-6 col-12">
-                            <div class="${colorClass} rounded-2 d-flex align-items-center flex-column p-2">
+                            <div class="border border-${colorC} rounded-2 d-flex align-items-center flex-row p-2">
+                                <div class="me-2">
+                                    <div class="icon-box md rounded-5 ${colorClass}">
+                                        <i class="${arrowIcon} fs-4 lh-1"></i>
+                                    </div>
+                                </div>
                                 <div class="m-0">
-                                    <div class="d-flex flex-column align-items-center">
-                                        <div class="fs-6 text-white fw-normal">${formatPrice(item.montant.toString())} Fcfa</div>
-                                        <small class="text-dark fw-bold text-white">${item.nom}</small>
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="m-0 fw-bold">${formatPrice(item.montant.toString())} Fcfa</h5>
                                         <div class="ms-2 ${pourcentageClass} d-flex">
-                                            <small class="text-white">${item.pourcentage}%</small>
-                                            ${arrowIcon}
+                                            <small>${item.pourcentage}%</small>
                                         </div>
                                     </div>
+                                    <small>${item.nom}</small>
                                 </div>
                             </div>
                         </div>
