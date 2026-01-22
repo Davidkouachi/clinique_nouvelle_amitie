@@ -408,5 +408,24 @@ $(document).ready(function () {
         $("#preloader_ch").remove();
     }
 
+    window.truncateText = function (text, maxLength = 20, suffix = '...') {
+        if (!text) return '';
+
+        return text.length > maxLength
+            ? text.slice(0, maxLength) + suffix
+            : text;
+    }
+
+    window.genererNomMois = function (month) {
+        // Tableau des noms de mois en français
+        const moisNoms = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+        ];
+
+        const moisNom = moisNoms[month - 1];
+        // Génération du nom de fichier
+        return `${moisNom}`;
+    }
 
 });

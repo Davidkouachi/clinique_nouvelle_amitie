@@ -111,6 +111,28 @@ $(document).ready(function () {
                 yPoss += 7;
             });
 
+            if (data.part_patient_regler === (data.montant_verser + data.montant_restant)) {
+
+                yPoss = (yPos + 109);
+
+                const payerInfo = [
+                    { label: "Total Verser", value: (formatPriceT(data.part_patient_regler) || '0')+" Fcfa" },
+                    { label: "Montant Verser", value: (formatPriceT(data.montant_verser) || '0')+" Fcfa" },
+                    { label: "Montant Remis", value: (formatPriceT(data.montant_remis) || '0')+" Fcfa" },
+                    { label: "Reste a payé", value: (formatPriceT(data.montant_restant) || '0')+" Fcfa" },
+                ];
+
+                payerInfo.forEach(info => {
+                    doc.setFontSize(9);
+                    doc.setFont("Helvetica", "bold");
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(info.label, leftMargin, yPoss);
+                    doc.setFont("Helvetica", "normal");
+                    doc.text(": " + info.value, leftMargin + 35, yPoss);
+                    yPoss += 7;
+                });
+            }
+
             yPoss = (yPos + 50);
 
             const medecinInfo = [
@@ -172,7 +194,7 @@ $(document).ready(function () {
                 piedPdf(doc, 5, yPoss + 16);
             } else {
 
-                piedPdf(doc, 5, yPoss + 28);
+                piedPdf(doc, 5, yPoss + 30);
             }
 
         }
@@ -395,6 +417,237 @@ $(document).ready(function () {
         }
 
         drawConsultationSection(yPos);
+
+        doc.output('dataurlnewwindow');
+    }
+
+    window.pdfFactureRecuConsultation = function (data) 
+    {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+        const pdfFilename = "CONSULTATION Facture N°" + data.numfac + " du " + formatDateHeure(data.date);
+        doc.setProperties({
+            title: pdfFilename,
+        });
+
+        yPos = 10;
+
+        function drawConsultationSection(yPos) {
+            rightMargin = 15;
+            leftMargin = 15;
+            pdfWidth = doc.internal.pageSize.getWidth();
+
+            // --------------------------------------------
+
+            tetePdf(doc, yPos, rightMargin, leftMargin, pdfWidth);
+
+            // --------------------------------------------
+
+            const consultationDate = new Date(data.date);
+            // Formatter la date et l'heure séparément
+            const formattedDate = consultationDate.toLocaleDateString(); // Formater la date
+            const formattedTime = consultationDate.toLocaleTimeString();
+            doc.text("Date: " + formattedDate, 15, (yPos + 25));
+            doc.text("Heure: " + formattedTime, 15, (yPos + 30));
+
+            //Ligne de séparation
+            doc.setFontSize(15);
+            doc.setFont("Helvetica", "bold");
+            doc.setLineWidth(0.5);
+            doc.setTextColor(0, 0, 0);
+            // doc.line(10, 35, 200, 35);
+
+            const titleR = "RECU DE PAIEMENT";
+            const titleRWidth = doc.getTextWidth(titleR);
+            const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
+            // Définir le padding
+            const paddingh = 0; // Padding vertical
+            const paddingw = 15; // Padding horizontal
+            // Calculer les dimensions du rectangle
+            const rectX = titleRX - paddingw; // X du rectangle
+            const rectY = (yPos + 18) - paddingh; // Y du rectangle
+            const rectWidth = titleRWidth + (paddingw * 2); // Largeur du rectangle
+            const rectHeight = 15 + (paddingh * 2); // Hauteur du rectangle
+            // Définir la couleur pour le cadre (noir)
+            doc.setDrawColor(0, 0, 0);
+            doc.rect(rectX, rectY, rectWidth, rectHeight); // Dessiner le rectangle
+            // Ajouter le texte centré en gras
+            doc.setFontSize(15);
+            doc.setFont("Helvetica", "bold");
+            doc.setTextColor(0, 0, 0); // Couleur du texte rouge
+            doc.text(titleR, titleRX, (yPos + 25)); // Positionner le texte
+            const titleN = "N° "+ data.numrecu;
+            doc.text(titleN, (doc.internal.pageSize.getWidth() - doc.getTextWidth(titleN)) / 2, (yPos + 31));
+
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.setTextColor(0, 0, 0);
+            const numDossier = data.numdossier ? " N° Dossier : " + data.numdossier : " N° Dossier : Aucun";
+            const numDossierWidth = doc.getTextWidth(numDossier);
+            doc.text(numDossier, (pdfWidth - rightMargin - numDossierWidth) + 5, yPos + 25);
+
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.setTextColor(0, 0, 0);
+            const numDossier2 = data.idenregistremetpatient ? " N° matricule : " + data.idenregistremetpatient  : " N° matricule : Aucun";
+            const numDossierWidth2 = doc.getTextWidth(numDossier);
+            doc.text(numDossier2, (pdfWidth - rightMargin - numDossierWidth2) + 5, yPos + 30);
+
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.setTextColor(0, 0, 0);
+            const numDate = "Date de paiement : "+ formatDate(data.datereglt_pat) ;
+            const numDateWidth = doc.getTextWidth(numDate);
+            doc.text(numDate, (doc.internal.pageSize.getWidth() - numDateWidth) / 2, yPos + 40);                   
+
+            yPoss = (yPos + 50);
+
+            let assurer;
+
+            if (data.assure == 1) {
+                assurer = 'Oui';
+            } else {
+                assurer = 'Non';
+            }
+
+            const patientInfo = [
+                { 
+                    label: "Nom et Prénoms", 
+                    value: data.nom_patient.length > 25 
+                        ? data.nom_patient.substring(0, 25) + '...' 
+                        : data.nom_patient 
+                },
+                { label: "Assurer", value: assurer },
+                { label: "Age", value: calculateAge(data.datenais)+" an(s)" },
+                { label: "Contact", value: data.telpatient }
+            ];
+
+            if (data.assure == 1) {
+                patientInfo.push(
+                    { 
+                        label: "Société",
+                        value: data.societe.length > 25 
+                        ? data.societe.substring(0, 25) + '...' 
+                        : data.societe
+                    },
+                    { 
+                        label: "Assurance",
+                        value: data.assurance.length > 25 
+                        ? data.assurance.substring(0, 25) + '...' 
+                        : data.assurance
+                    },
+                    { label: "Matricule", value: data.matriculeassure },
+                    { label: "N° de Bon", value: data.numbon || 'Aucun' },
+                );
+            }
+
+            patientInfo.forEach(info => {
+                doc.setFontSize(9);
+                doc.setFont("Helvetica", "bold");
+                doc.text(info.label, leftMargin, yPoss);
+                doc.setFont("Helvetica", "bold");
+                doc.text(": " + info.value, leftMargin + 35, yPoss);
+                yPoss += 7;
+            });
+
+            yPoss = (yPos + 109);
+
+            const payerInfo = [
+                { label: "Total Verser", value: (formatPriceT(data.part_patient_regler) || '0')+" Fcfa" },
+                { label: "Montant Verser", value: (formatPriceT(data.montant_verser) || '0')+" Fcfa" },
+                { label: "Montant Remis", value: (formatPriceT(data.montant_remis) || '0')+" Fcfa" },
+                { label: "Reste a payé", value: (formatPriceT(data.montant_restant) || '0')+" Fcfa" },
+            ];
+
+            payerInfo.forEach(info => {
+                doc.setFontSize(9);
+                doc.setFont("Helvetica", "bold");
+                doc.setTextColor(0, 0, 0);
+                doc.text(info.label, leftMargin, yPoss);
+                doc.setFont("Helvetica", "normal");
+                doc.text(": " + info.value, leftMargin + 35, yPoss);
+                yPoss += 7;
+            });
+
+            yPoss = (yPos + 50);
+
+            const medecinInfo = [
+                { label: "N° Consultation", value: data.idconsexterne},
+                { label: "N° Facture", value: data.numfac},
+                { 
+                    label: "Medecin", 
+                    value: data.nom_medecin.length > 20 
+                        ? data.nom_medecin.substring(0, 20) + '...' 
+                        : data.nom_medecin 
+                },
+                { label: "Spécialité", value: data.specialite },
+                { label: "Prix Consultation", value: formatPriceT(data.montant)+" Fcfa" },
+            ];
+
+            medecinInfo.forEach(info => {
+                doc.setFontSize(9);
+                doc.setFont("Helvetica", "bold");
+                doc.setTextColor(0, 0, 0);
+                doc.text(info.label, leftMargin + 100, yPoss);
+                doc.setFont("Helvetica", "normal");
+                doc.text(": " + info.value, leftMargin + 135, yPoss);
+                yPoss += 7;
+            });
+
+            yPoss = (yPos + 90);
+
+            const compteInfo = [
+                { label: "Montant Total", value: formatPriceT(data.montant)+" Fcfa" },
+                ...(data.assure == 1 
+                    ? [
+                        { label: "Part assurance", value: formatPriceT(data.partassurance)+" Fcfa" },
+                        { label: "Taux", value: data.taux+" %" }
+                      ] 
+                    : []),
+                { label: "Remise", value: formatPriceT(data.remise)+" Fcfa" },
+            ];
+
+            compteInfo.forEach(info => {
+                doc.setFontSize(9);
+                doc.setFont("Helvetica", "bold");
+                doc.setTextColor(0, 0, 0);
+                doc.text(info.label, leftMargin + 100, yPoss);
+                doc.setFont("Helvetica", "normal");
+                doc.text(": " + info.value, leftMargin + 135, yPoss);
+                yPoss += 7;
+            });
+
+            yPoss += 1;
+
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("Helvetica", "bold");
+            doc.text('Montant à payer', leftMargin + 100, yPoss);
+            doc.setFont("Helvetica", "bold");
+            doc.text(": "+formatPriceT(data.part_patient)+" Fcfa", leftMargin + 135, yPoss);
+
+            let textP = "Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString() + " ( NB: recu valable pour 15 jours uniquement pour la même consultation de la même pathologie )"; 
+            if (data.assure == 1) {
+                
+                piedPdf(doc, 5, yPoss + 16, textP);
+            } else {
+                
+                piedPdf(doc, 5, yPoss + 30, textP);
+            }
+
+        }
+
+        drawConsultationSection(yPos);
+
+        doc.setFontSize(30);
+        doc.setLineWidth(0.5);
+        doc.setLineDashPattern([3, 3], 0);
+        doc.line(0, (yPos + 137), 300, (yPos + 137));
+        doc.setLineDashPattern([], 0);
+
+        drawConsultationSection(yPos + 150);
+
 
         doc.output('dataurlnewwindow');
     }

@@ -85,6 +85,8 @@
 
 <script src="{{asset('jsPDF-master/dist/jspdf.umd.js')}}"></script>
 <script src="{{asset('jsPDF-AutoTable/dist/jspdf.plugin.autotable.min.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/para.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/facture.js')}}"></script>
 
 @include('select2')
 
@@ -96,53 +98,6 @@
         // $("#date1").on("change", datechange);
         $("#btn_imp").on("click", imp_fac_assurance);
         $("#btn_imp_bordo").on("click", imp_fac_assurance_bordo);
-
-        function showAlert(title, message, type) {
-            Swal.fire({
-                title: title,
-                text: message,
-                icon: type,
-            });
-        }
-
-        function formatPrice(price) {
-
-            // Convert to float and round to the nearest whole number
-            let number = Math.round(parseFloat(price));
-            if (isNaN(number)) {
-                return '';
-            }
-
-            // Format the number with dot as thousands separator
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function formatDate(dateString)
-        {
-
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-            const year = date.getFullYear();
-
-            return `${day}/${month}/${year}`; // Format as dd/mm/yyyy
-        }
-
-        function formatDateHeure(dateString)
-        {
-
-            const date = new Date(dateString);
-                
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${day}/${month}/${year} à ${hours}:${minutes}:${seconds}`;
-        }
 
         function isValidDate(dateString) {
             const regEx = /^\d{4}-\d{2}-\d{2}$/;
@@ -202,24 +157,6 @@
                 return false;
             }
 
-            // if (!isValidDate(date1)) {
-            //     showAlert('Erreur', 'La première date est invalide.', 'error');
-            //     return false;
-            // }
-
-            // if (!isValidDate(date2)) {
-            //     showAlert('Erreur', 'La deuxième date est invalide.', 'error');
-            //     return false;
-            // }
-
-            // const startDate = new Date(date1);
-            // const endDate = new Date(date2);
-
-            // if (startDate > endDate) {
-            //     showAlert('Erreur', 'La date de début ne peut pas être supérieur à la date de fin.', 'error');
-            //     return false;
-            // }
-
             $('body').append('<div id="preloader_ch"><div class="spinner_preloader_ch"></div></div>');
 
             $.ajax({
@@ -230,7 +167,7 @@
                     $('#preloader_ch').remove();
                     const { societes, assurance, month, year } = response;
                     if (societes.length > 0) {
-                        generatePDFInvoice_Fac_Assurance(societes, assurance, month, year);
+                        pdfFactureEmis(societes, assurance, month, year);
                     } else {
                         showAlert('Informations', "Aucune facture n'a été trouvée pour cette période", 'info');
                     }
@@ -254,24 +191,6 @@
                 return false;
             }
 
-            // if (!isValidDate(date1)) {
-            //     showAlert('Erreur', 'La première date est invalide.', 'error');
-            //     return false;
-            // }
-
-            // if (!isValidDate(date2)) {
-            //     showAlert('Erreur', 'La deuxième date est invalide.', 'error');
-            //     return false;
-            // }
-
-            // const startDate = new Date(date1);
-            // const endDate = new Date(date2);
-
-            // if (startDate > endDate) {
-            //     showAlert('Erreur', 'La date de début ne peut pas être supérieur à la date de fin.', 'error');
-            //     return false;
-            // }
-
             $('body').append('<div id="preloader_ch"><div class="spinner_preloader_ch"></div></div>');
 
             $.ajax({
@@ -282,7 +201,7 @@
                     $('#preloader_ch').remove();
                     const { societes, assurance, month, year } = response;
                     if (societes.length > 0) {
-                        generatePDFInvoice_Fac_Assurance_Bordo(societes, assurance, month, year);
+                        pdfFactureEmisBordo(societes, assurance, month, year);
                     } else {
                         showAlert('Informations', "Aucune facture n'a été trouvée pour cette période", 'info');
                     }
@@ -292,383 +211,6 @@
                     showAlert('Alert', 'Une erreur est survenue.', 'error');
                 }
             });
-        }
-
-        function genererNomMois(month) {
-          // Tableau des noms de mois en français
-          const moisNoms = [
-            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
-          ];
-
-          const moisNom = moisNoms[month - 1];
-          // Génération du nom de fichier
-          return `${moisNom}`;
-        }
-
-        function generatePDFInvoice_Fac_Assurance(societes,assurance,month,year) {
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "FACTURE EMISE - Période de " + genererNomMois(month) + ' ' + year;
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            let yPos = 10;
-
-            function drawSection(yPos) {
-
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-
-                // Définir le style pour le texte
-                doc.setFontSize(12);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-
-                const titleR = "LISTE DES FACTURES PAR ASSURANCE : " + assurance.libelleassurance;
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-
-                const paddingh = 5;  // Ajuster le padding en hauteur
-                const paddingw = 5;  // Ajuster le padding en largeur
-
-                const rectX = titleRX - paddingw;
-                let rectY = yPos + 18; // Position initiale du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2);
-                const rectHeight = 15 + (paddingh * 2);
-
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight);
-
-                // Centrer le texte dans le rectangle
-                const textY = rectY + (rectHeight / 2) - 2;  // Ajustement de la position Y du texte pour centrer verticalement
-                doc.text(titleR, titleRX, textY);
-
-                // Ajout de la date sous le titre avec un saut de ligne
-                const dateText = "Période de " + genererNomMois(month) + ' ' + year; // Assurez-vous que formatDate est une fonction qui formate la date comme vous le souhaitez
-                const dateTextWidth = doc.getTextWidth(dateText);
-                const dateTextX = (doc.internal.pageSize.getWidth() - dateTextWidth) / 2; // Centrer la date
-
-                // Positionner la date sous le rectangle
-                doc.text(dateText, dateTextX, textY + 10);  // Ajuster `+ 10` selon l'espace souhaité entre le titre et la date
-
-
-                yPoss = (yPos + 40);
-
-                let grandTotalAssurance = 0;
-                let grandTotalPatient = 0;
-                let grandTotalMontant = 0;
-
-                if (societes.length > 0) {
-                    societes.forEach((societe, indexSociete) => {
-                        const fac_cons = societe.fac_cons || [];
-                        const fac_exam = societe.fac_exam || [];
-                        const fac_soinsam = societe.fac_soinsam || [];
-                        const fac_hopital = societe.fac_hopital || [];
-
-                        // Fusionner consultations, examens et soins ambulatoires dans un tableau unique
-                        const fac_global = [
-                            ...fac_cons.map(item => ({
-                                ...item,
-                                acte: 'Consultation',
-                            })),
-                            ...fac_exam.map(item => ({
-                                ...item,
-                                acte: 'Examen',
-                            })),
-                            ...fac_soinsam.map(item => ({
-                                ...item,
-                                acte: 'Soins Ambulatoire',
-                            })),
-                            ...fac_hopital.map(item => ({
-                                ...item,
-                                acte: 'Hospitalisation',
-                            })),
-                        ];
-
-                        if (fac_global.length > 0) {
-                            // Titre de la société
-                            yPoss += 20;
-                            doc.setFontSize(14);
-                            doc.setFont("Helvetica", "bold");
-                            doc.text("Société : " + societe.nomsocieteassure, 15, yPoss);
-                            yPoss += 5;
-
-                            // Calculer les totaux pour la société
-                            const totalAssurance = fac_global.reduce((sum, item) => sum + parseInt(item.part_assurance || 0), 0);
-                            const totalPatient = fac_global.reduce((sum, item) => sum + parseInt(item.part_patient || 0), 0);
-                            const totalMontant = fac_global.reduce((sum, item) => sum + parseInt(item.montant || 0), 0);
-
-                            // Ajouter les totaux de cette société aux grands totaux
-                            grandTotalAssurance += totalAssurance;
-                            grandTotalPatient += totalPatient;
-                            grandTotalMontant += totalMontant;
-
-                            // Générer le tableau unique pour consultations, examens et soins ambulatoires avec une ligne de pied
-                            doc.autoTable({
-                                startY: yPoss,
-                                head: [['N°', 'Date', 'Numéro de Bon', 'Patient', 'Acte effectué', 'Montant Total', 'Part Assurance', 'Part assuré']],
-                                body: fac_global.map((item, index) => [
-                                    index + 1,
-                                    formatDate(item.created_at) || '',
-                                    item.num_bon || '',
-                                    item.patient || '',
-                                    item.acte,
-                                    (formatPrice(item.montant) || '') + " Fcfa",
-                                    (formatPrice(item.part_assurance) || '') + " Fcfa",
-                                    (formatPrice(item.part_patient) || '') + " Fcfa",
-                                ]),
-                                theme: 'striped',
-                                tableWidth: 'auto',
-                                styles: {
-                                    fontSize: 7,
-                                    overflow: 'linebreak',
-                                },
-                                // Footer row with the total values
-                                foot: [[
-                                    { content: 'Totals', colSpan: 5, styles: { halign: 'center', fontStyle: 'bold' } },
-                                    { content: formatPrice(totalMontant) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                    { content: formatPrice(totalAssurance) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                    { content: formatPrice(totalPatient) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                    
-                                ]]
-                            });
-
-                            const finalY = doc.autoTable.previous.finalY || yPoss + 10;
-                            yPoss = finalY + 10;
-
-                            if (indexSociete < societes.length - 1) {
-
-                                if (yPoss + 30 > doc.internal.pageSize.height) {
-                                    doc.addPage();
-                                    yPoss = 20;
-                                }
-                            }
-                            
-                        }
-                    });
-
-                    const finalY = doc.autoTable.previous.finalY || yPoss + 20;
-                    yPoss = finalY + 20;
-
-                    if (yPoss + 40 > doc.internal.pageSize.height) {
-                        doc.addPage();
-                        yPoss = 20;
-                    }
-
-                    // Afficher les grands totaux sur cette page
-                    doc.setFontSize(14);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text("TOTAL DES FACTURES", 15, yPoss);
-                    yPoss += 10;
-
-                    const grandTotalInfo = [
-                        { label: "Total Assurance", value: formatPrice(grandTotalAssurance) +" Fcfa" },
-                        { label: "Total Patient", value: formatPrice(grandTotalPatient) + " Fcfa" },
-                        { label: "Montant Total", value: formatPrice(grandTotalMontant) + " Fcfa" },
-                    ];
-
-                    // Afficher les grands totaux sur la nouvelle page
-                    grandTotalInfo.forEach(info => {
-                        doc.setFontSize(11);
-                        doc.setFont("Helvetica", "bold");
-                        doc.text(info.label, leftMargin, yPoss);
-                        doc.setFont("Helvetica", "normal");
-                        doc.text(": " + info.value, leftMargin + 50, yPoss);
-                        yPoss += 7;
-                    });
-                }
-
-            }
-
-            function addFooter() {
-                // Add footer with current date and page number in X/Y format
-                const pageCount = doc.internal.getNumberOfPages();
-                const footerY = doc.internal.pageSize.getHeight() - 2; // 10 mm from the bottom
-
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(0, 0, 0);
-                    const pageText = `Page ${i} sur ${pageCount}`;
-                    const pageTextWidth = doc.getTextWidth(pageText);
-                    const centerX = (doc.internal.pageSize.getWidth() - pageTextWidth) / 2;
-                    doc.text(pageText, centerX, footerY);
-                    doc.text("Imprimé le : " + new Date().toLocaleDateString() + " à " + new Date().toLocaleTimeString(), 15, footerY); // Left-aligned
-                }
-            }
-
-            drawSection(yPos);
-
-            addFooter();
-
-            doc.output('dataurlnewwindow');
-        }
-
-        function generatePDFInvoice_Fac_Assurance_Bordo(societes,assurance,month,year) {
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-            const pdfFilename = "BORDEREAUX DES FACTURES EMISES - Période de " + genererNomMois(month) + ' ' + year;
-            doc.setProperties({
-                title: pdfFilename,
-            });
-
-            let yPos = 10;
-
-            function drawSection(yPos) {
-
-                rightMargin = 15;
-                leftMargin = 15;
-                pdfWidth = doc.internal.pageSize.getWidth();
-
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.setFont("Helvetica", "bold");
-
-                const logoSrc = "{{asset('assets/images/logo.png')}}";
-                const logoWidth = 22;
-                const logoHeight = 22;
-                doc.addImage(logoSrc, 'PNG', leftMargin, yPos - 7, logoWidth, logoHeight);
-
-                const title = "ESPACE MEDICO SOCIAL LA PYRAMIDE DU COMPLEXE";
-                const titleWidth = doc.getTextWidth(title);
-                const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
-                doc.text(title, titleX, yPos);
-
-                doc.setFont("Helvetica", "normal");
-                const address = "Abidjan Yopougon Selmer, Non loin du complexe sportif Jesse-Jackson - 04 BP 1523";
-                const addressWidth = doc.getTextWidth(address);
-                const addressX = (doc.internal.pageSize.getWidth() - addressWidth) / 2;
-                doc.text(address, addressX, (yPos + 5));
-
-                const phone = "Tél.: 20 24 44 70 / 20 21 71 92 - Cel.: 01 01 01 63 43";
-                const phoneWidth = doc.getTextWidth(phone);
-                const phoneX = (doc.internal.pageSize.getWidth() - phoneWidth) / 2;
-                doc.text(phone, phoneX, (yPos + 10));
-
-                // Définir le style pour le texte
-                doc.setFontSize(12);
-                doc.setFont("Helvetica", "bold");
-                doc.setLineWidth(0.5);
-                doc.setTextColor(0, 0, 0);
-
-                const titleR = "BORDEREAUX PAR ASSURANCE : " + assurance.libelleassurance;
-                const titleRWidth = doc.getTextWidth(titleR);
-                const titleRX = (doc.internal.pageSize.getWidth() - titleRWidth) / 2;
-
-                const paddingh = 5;  // Ajuster le padding en hauteur
-                const paddingw = 5;  // Ajuster le padding en largeur
-
-                const rectX = titleRX - paddingw;
-                let rectY = yPos + 18; // Position initiale du rectangle
-                const rectWidth = titleRWidth + (paddingw * 2);
-                const rectHeight = 15 + (paddingh * 2);
-
-                doc.setDrawColor(0, 0, 0);
-                doc.rect(rectX, rectY, rectWidth, rectHeight);
-
-                // Centrer le texte dans le rectangle
-                const textY = rectY + (rectHeight / 2) - 2;  // Ajustement de la position Y du texte pour centrer verticalement
-                doc.text(titleR, titleRX, textY);
-
-                // Ajout de la date sous le titre avec un saut de ligne
-                const dateText = "Période de " + genererNomMois(month) + ' ' + year; // Assurez-vous que formatDate est une fonction qui formate la date comme vous le souhaitez
-                const dateTextWidth = doc.getTextWidth(dateText);
-                const dateTextX = (doc.internal.pageSize.getWidth() - dateTextWidth) / 2; // Centrer la date
-                // Positionner la date sous le rectangle
-                doc.text(dateText, dateTextX, textY + 10);
-
-                yPoss = (yPos + 50);
-
-                if (societes.length > 0) {
-
-                    // Totals
-                    const totalAssurance = societes.reduce((sum, item) => sum + parseInt(item.total_assurance || 0), 0);
-                    const totalPatient = societes.reduce((sum, item) => sum + parseInt(item.total_patient || 0), 0);
-                    const totalMontant = societes.reduce((sum, item) => sum + parseInt(item.total_montant || 0), 0);
-
-                    doc.autoTable({
-                        startY: yPoss,
-                        head: [['N°', 'Société', 'Montant Total', 'Part Assurance', 'Part assuré']],
-                        body: societes.map((item, index) => [
-                            index + 1,
-                            item.nomsocieteassure || '',
-                            (formatPrice(item.total_montant) || '') + " Fcfa",
-                            (formatPrice(item.total_assurance) || '') + " Fcfa",
-                            (formatPrice(item.total_patient) || '') + " Fcfa",
-                        ]),
-                        theme: 'striped',
-                        tableWidth: 'auto',
-                        styles: {
-                            fontSize: 7,
-                            overflow: 'linebreak',
-                        },
-                        foot: [[
-                            { content: 'Totals', colSpan: 2, styles: { halign: 'center', fontStyle: 'bold' } },
-                            { content: formatPrice(totalMontant) + " Fcfa", styles: { fontStyle: 'bold' } },
-                            { content: formatPrice(totalAssurance) + " Fcfa", styles: { fontStyle: 'bold' } },
-                            { content: formatPrice(totalPatient) + " Fcfa", styles: { fontStyle: 'bold' } },
-                                    
-                        ]]
-                    });
-                }
-
-            }
-
-            function addFooter() {
-                // Add footer with current date and page number in X/Y format
-                const pageCount = doc.internal.getNumberOfPages();
-                const footerY = doc.internal.pageSize.getHeight() - 2; // 10 mm from the bottom
-
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(0, 0, 0);
-                    const pageText = `Page ${i} sur ${pageCount}`;
-                    const pageTextWidth = doc.getTextWidth(pageText);
-                    const centerX = (doc.internal.pageSize.getWidth() - pageTextWidth) / 2;
-                    doc.text(pageText, centerX, footerY);
-                    doc.text("Imprimé le : " + new Date().toLocaleDateString() + " à " + new Date().toLocaleTimeString(), 15, footerY); // Left-aligned
-                }
-            }
-
-            drawSection(yPos);
-
-            addFooter();
-
-            doc.output('dataurlnewwindow');
         }
 
     });

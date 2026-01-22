@@ -208,6 +208,8 @@
 
 <script src="{{asset('jsPDF-master/dist/jspdf.umd.js')}}"></script>
 <script src="{{asset('jsPDF-AutoTable/dist/jspdf.plugin.autotable.min.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/para.js')}}"></script>
+<script src="{{asset('assets/app/js/pdf/facture.js')}}"></script>
 
 <script>
     $(document).ready(function() {
@@ -518,7 +520,7 @@
                         const year = data.year;
 
                         if (societes.length > 0) {
-                            generatePDFInvoice_Fac_Assurance(societes, assurance, month, year);
+                            pdfFactureEmis(societes, assurance, month, year);
                         } else {
                             showAlert('Informations', 'Aucune donnée trouvée pour cette période', 'info');
                         }
@@ -558,7 +560,7 @@
                         const fac = data.fac;
 
                         if (societes.length > 0) {
-                            generatePDFInvoice_Fac_Assurance_Bordo(societes, assurance, month, year, fac);
+                            pdfFactureEmisBordo(societes, assurance, month, year, fac);
                         } else {
                             showAlert('Informations', 'Aucune donnée trouvée pour cette période', 'info');
                         }

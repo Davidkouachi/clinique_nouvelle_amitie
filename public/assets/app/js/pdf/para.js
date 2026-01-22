@@ -63,12 +63,12 @@ $(document).ready(function () {
         doc.text(window.phone, pdfWidth / 2, yPos + 10, { align: "center" });
     };
 
-    window.piedPdf = function (doc, w, h) {
-
+    window.piedPdf = function (doc, w, h, t = null) {
+        const td = t ?? "Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString();
         doc.setFontSize(8);
         doc.setFont("Helvetica", "bold");
         doc.setTextColor(0, 0, 0);
-        doc.text("Imprimer le "+new Date().toLocaleDateString()+" à "+new Date().toLocaleTimeString() , w, h);
+        doc.text(td , w, h);
     };
 
     window.addFooter = function (doc) {
